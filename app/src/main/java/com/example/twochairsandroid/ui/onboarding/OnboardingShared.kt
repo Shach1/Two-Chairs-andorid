@@ -278,14 +278,14 @@ internal fun PromoBuyButton(onClick: () -> Unit) {
             )
             Spacer(modifier = Modifier.size(12.dp))
             Text(
-                text = "6704 Р",
+                text = "599 Р",
                 style = MaterialTheme.typography.titleMedium,
                 color = Color(0xFFD758A1),
                 textDecoration = androidx.compose.ui.text.style.TextDecoration.LineThrough,
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
-                text = "1990 Р",
+                text = "399 Р",
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color(0xFFD3268D),
                 fontWeight = FontWeight.Bold,

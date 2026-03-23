@@ -159,8 +159,8 @@ internal fun HomeScreen(
                 Text(
                     text = "Супер темы",
                     style = MaterialTheme.typography.headlineLarge.copy(
-                        fontSize = 44.sp,
-                        lineHeight = 44.sp,
+                        fontSize = 30.sp,
+                        lineHeight = 32.sp,
                     ),
                     color = Color(0xFF07090B),
                     textAlign = TextAlign.Center,
@@ -366,13 +366,14 @@ private fun HomeQuestionCard(onStartGame: () -> Unit) {
                 Text(
                     text = "Что ты\nвыберешь",
                     style = MaterialTheme.typography.headlineLarge.copy(
-                        fontSize = 40.sp,
-                        lineHeight = 42.sp,
+                        fontSize = 30.sp,
+                        lineHeight = 32.sp,
                     ),
                     color = Color(0xFF07090B),
                     textAlign = TextAlign.Center,
                 )
             }
+            Spacer(modifier = Modifier.height(14.dp))
 
             Text(
                 text = "Быть высокой\nсобакой с низкими\nпоступками",
