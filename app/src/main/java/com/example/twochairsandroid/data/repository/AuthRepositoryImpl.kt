@@ -23,6 +23,7 @@ class AuthRepositoryImpl(
     override val accessTokenFlow: Flow<String?> = tokenStorage.accessTokenFlow
 
     override suspend fun getAccessToken(): String? = tokenStorage.getAccessToken()
+    override suspend fun getIsPremium(): Boolean = tokenStorage.getIsPremium()
 
     override suspend fun sendCode(phoneNumber: String): ApiResult<SmsCodeInfo> {
         return safeApiCall(
@@ -48,6 +49,7 @@ class AuthRepositoryImpl(
 
         if (result is ApiResult.Success) {
             tokenStorage.saveAccessToken(result.data.accessToken)
+            tokenStorage.saveIsPremium(result.data.user.isPremium)
         }
 
         return result

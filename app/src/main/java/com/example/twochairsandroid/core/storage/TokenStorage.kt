@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +28,14 @@ class TokenStorage(
         }
         .map { prefs -> prefs[ACCESS_TOKEN_KEY] }
 
+    val isPremiumFlow: Flow<Boolean> = dataStore.data
+        .catch {
+            if (it is IOException) emit(emptyPreferences()) else throw it
+        }
+        .map { prefs -> prefs[IS_PREMIUM_KEY] ?: false }
+
     suspend fun getAccessToken(): String? = accessTokenFlow.first()
+    suspend fun getIsPremium(): Boolean = isPremiumFlow.first()
 
     suspend fun saveAccessToken(token: String) {
         dataStore.edit { prefs ->
@@ -35,13 +43,20 @@ class TokenStorage(
         }
     }
 
+    suspend fun saveIsPremium(isPremium: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[IS_PREMIUM_KEY] = isPremium
+        }
+    }
+
     suspend fun clearAccessToken() {
         dataStore.edit { prefs ->
-            prefs.remove(ACCESS_TOKEN_KEY)
+            prefs.clear()
         }
     }
 
     private companion object {
         val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
+        val IS_PREMIUM_KEY = booleanPreferencesKey("is_premium")
     }
 }

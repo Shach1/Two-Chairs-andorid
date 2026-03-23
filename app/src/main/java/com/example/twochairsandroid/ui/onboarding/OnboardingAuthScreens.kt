@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.example.twochairsandroid.R
 import com.example.twochairsandroid.core.di.appContainer
 import com.example.twochairsandroid.core.network.ApiResult
+import com.example.twochairsandroid.domain.model.AuthSession
 import kotlinx.coroutines.launch
 
 private enum class SmsMode {
@@ -55,7 +56,7 @@ private enum class SmsStep {
 internal fun RegisterScreen(
     onBack: () -> Unit,
     onAlreadyHaveAccount: () -> Unit,
-    onRegistrationDone: () -> Unit,
+    onRegistrationDone: (AuthSession) -> Unit,
 ) {
     SmsAuthScreen(
         mode = SmsMode.Register,
@@ -73,7 +74,7 @@ internal fun RegisterScreen(
 internal fun LoginScreen(
     onBack: () -> Unit,
     onNeedRegistration: () -> Unit,
-    onLoginDone: () -> Unit,
+    onLoginDone: (AuthSession) -> Unit,
 ) {
     SmsAuthScreen(
         mode = SmsMode.Login,
@@ -96,7 +97,7 @@ private fun SmsAuthScreen(
     onBack: () -> Unit,
     secondaryActionText: String,
     onSecondaryAction: () -> Unit,
-    onSuccess: () -> Unit,
+    onSuccess: (AuthSession) -> Unit,
 ) {
     val context = LocalContext.current
     val authRepository = remember(context) { context.appContainer.authRepository }
@@ -232,7 +233,7 @@ private fun SmsAuthScreen(
                                     errorText = "Введите код из СМС"
                                 } else {
                                     when (val result = authRepository.verifyCode(phone.trim(), currentCode)) {
-                                        is ApiResult.Success -> onSuccess()
+                                        is ApiResult.Success -> onSuccess(result.data)
                                         is ApiResult.Error -> errorText = result.error.message
                                     }
                                 }

@@ -11,8 +11,9 @@ class AuthHeaderInterceptor(
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking { tokenStorage.getAccessToken() }
+        val path = chain.request().url.encodedPath
         val request = chain.request().newBuilder().apply {
-            if (!token.isNullOrBlank()) {
+            if (!token.isNullOrBlank() && !path.contains("/auth/")) {
                 addHeader("Authorization", "Bearer $token")
             }
         }.build()

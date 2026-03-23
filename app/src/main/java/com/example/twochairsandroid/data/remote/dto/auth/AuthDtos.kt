@@ -32,7 +32,8 @@ data class AuthResponseDto(
 data class UserDto(
     val id: Long,
     val phoneNumber: String,
-    @SerialName("isPremium") val isPremium: Boolean,
+    @SerialName("premium") val premium: Boolean? = null,
+    @SerialName("isPremium") val isPremium: Boolean? = null,
 )
 
 fun SendCodeResponseDto.toDomain(): SmsCodeInfo = SmsCodeInfo(expiresInSeconds = expiresInSeconds)
@@ -45,5 +46,5 @@ fun AuthResponseDto.toDomain(): AuthSession = AuthSession(
 fun UserDto.toDomain(): User = User(
     id = id,
     phoneNumber = phoneNumber,
-    isPremium = isPremium,
+    isPremium = premium ?: isPremium ?: false,
 )

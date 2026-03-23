@@ -9,4 +9,6 @@ internal object OnboardingRoutes {
     const val Register = "register"
     const val Login = "login"
     const val RegisterResult = "register_result"
+    const val Home = "home"
+    const val Profile = "profile"
 }
