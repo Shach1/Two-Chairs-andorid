@@ -61,6 +61,7 @@ import com.example.twochairsandroid.R
 import com.example.twochairsandroid.core.di.appContainer
 import com.example.twochairsandroid.core.network.ApiResult
 import com.example.twochairsandroid.domain.model.Deck
+import com.example.twochairsandroid.domain.model.Product
 import com.example.twochairsandroid.domain.model.Question
 import kotlinx.coroutines.launch
 
@@ -68,7 +69,7 @@ internal data class MyDeckFeatureUiState(
     val isLoading: Boolean = false,
     val errorText: String? = null,
     val canCreate: Boolean = false,
-    val unlockPriceRub: Int? = null,
+    val unlockProduct: Product? = null,
 )
 
 private data class MyDecksUiState(
@@ -90,7 +91,7 @@ internal fun MyDeckFeatureSection(
     uiState: MyDeckFeatureUiState,
     onRetry: () -> Unit,
     onOpenMyDecks: () -> Unit,
-    onUnlock: () -> Unit,
+    onUnlock: (Product) -> Unit,
 ) {
     when {
         uiState.isLoading -> {
@@ -251,9 +252,16 @@ internal fun MyDeckFeatureSection(
                                 text = if (uiState.canCreate) {
                                     "Мои колоды"
                                 } else {
-                                    "Разблокировать ${uiState.unlockPriceRub ?: "..."} ₽"
+                                    "Разблокировать ${uiState.unlockProduct?.priceRub ?: "..."} ₽"
                                 },
-                                onClick = if (uiState.canCreate) onOpenMyDecks else onUnlock,
+                                onClick = if (uiState.canCreate) {
+                                    onOpenMyDecks
+                                } else {
+                                    {
+                                        uiState.unlockProduct?.let { onUnlock(it) }
+                                        Unit
+                                    }
+                                },
                             )
                         }
                     }

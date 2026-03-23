@@ -24,6 +24,7 @@ class AuthRepositoryImpl(
 
     override suspend fun getAccessToken(): String? = tokenStorage.getAccessToken()
     override suspend fun getIsPremium(): Boolean = tokenStorage.getIsPremium()
+    override suspend fun setIsPremium(isPremium: Boolean) = tokenStorage.saveIsPremium(isPremium)
 
     override suspend fun sendCode(phoneNumber: String): ApiResult<SmsCodeInfo> {
         return safeApiCall(

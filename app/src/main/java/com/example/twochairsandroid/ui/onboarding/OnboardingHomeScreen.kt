@@ -76,11 +76,12 @@ private val ShowcaseGradients = listOf(
 @Composable
 internal fun HomeScreen(
     isPremiumUser: Boolean,
+    refreshSignal: Int,
     onOpenPaidTheme: (Product) -> Unit,
     onOpenProfile: () -> Unit,
     onOpenPremiumPromo: () -> Unit,
     onOpenMyDecks: () -> Unit,
-    onUnlockMyDeckFeature: () -> Unit,
+    onUnlockMyDeckFeature: (Product) -> Unit,
     onStartGame: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -140,20 +141,12 @@ internal fun HomeScreen(
 
             when (canCreateResult) {
                 is ApiResult.Success -> {
-                    val unlockPrice = when (productsResult) {
-                        is ApiResult.Success -> {
-                            productsResult.data.firstOrNull {
-                                it.type == ProductType.FEATURE_CREATE_DECKS
-                            }?.priceRub
-                        }
-
-                        is ApiResult.Error -> null
-                    }
-
                     myDeckFeatureState = MyDeckFeatureUiState(
                         isLoading = false,
                         canCreate = canCreateResult.data,
-                        unlockPriceRub = unlockPrice,
+                        unlockProduct = (productsResult as? ApiResult.Success)?.data?.firstOrNull {
+                            it.type == ProductType.FEATURE_CREATE_DECKS
+                        },
                     )
                 }
 
@@ -167,7 +160,7 @@ internal fun HomeScreen(
         }
     }
 
-    LaunchedEffect(isPremiumUser) {
+    LaunchedEffect(isPremiumUser, refreshSignal) {
         if (isPremiumUser) {
             showcaseState = HomeShowcaseUiState(isLoading = false)
         } else {

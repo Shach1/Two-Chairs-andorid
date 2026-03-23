@@ -200,7 +200,7 @@ internal fun ThemeDetailsScreen(
     deckId: Long,
     onBack: () -> Unit,
     onOpenPremiumPromo: () -> Unit,
-    onBuy: (Long) -> Unit = {},
+    onBuy: (Product) -> Unit = {},
 ) {
     val context = LocalContext.current
     val deckRepository = remember(context) { context.appContainer.deckRepository }
@@ -352,7 +352,7 @@ internal fun ThemeDetailsScreen(
                         ThemeBuyButton(
                             modifier = Modifier.fillMaxWidth(0.86f),
                             text = "Купить ${product.priceRub} ₽",
-                            onClick = { onBuy(product.id) },
+                            onClick = { onBuy(product) },
                         )
                         Spacer(modifier = Modifier.height(14.dp))
                         Text(

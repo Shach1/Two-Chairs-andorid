@@ -10,6 +10,7 @@ interface AuthRepository {
 
     suspend fun getAccessToken(): String?
     suspend fun getIsPremium(): Boolean
+    suspend fun setIsPremium(isPremium: Boolean)
     suspend fun sendCode(phoneNumber: String): ApiResult<SmsCodeInfo>
     suspend fun verifyCode(phoneNumber: String, code: String): ApiResult<AuthSession>
     suspend fun clearSession()
