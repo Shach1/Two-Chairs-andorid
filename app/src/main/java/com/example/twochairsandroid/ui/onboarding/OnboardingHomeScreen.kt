@@ -78,6 +78,7 @@ internal fun HomeScreen(
     isPremiumUser: Boolean,
     onOpenPaidTheme: (Product) -> Unit,
     onOpenProfile: () -> Unit,
+    onOpenPremiumPromo: () -> Unit,
     onStartGame: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -146,6 +147,7 @@ internal fun HomeScreen(
                 HomeTopBar(
                     isPremiumUser = isPremiumUser,
                     onProfileClick = onOpenProfile,
+                    onStandardClick = onOpenPremiumPromo,
                 )
             }
 
@@ -264,6 +266,7 @@ internal fun HomeScreen(
 private fun HomeTopBar(
     isPremiumUser: Boolean,
     onProfileClick: () -> Unit,
+    onStandardClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -272,7 +275,14 @@ private fun HomeTopBar(
         Box(
             modifier = Modifier
                 .width(148.dp)
-                .height(58.dp),
+                .height(58.dp)
+                .then(
+                    if (isPremiumUser) {
+                        Modifier
+                    } else {
+                        Modifier.clickable { onStandardClick() }
+                    }
+                ),
             contentAlignment = Alignment.Center,
         ) {
             Image(

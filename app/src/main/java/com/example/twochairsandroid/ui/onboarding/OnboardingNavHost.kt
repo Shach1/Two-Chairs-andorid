@@ -69,6 +69,13 @@ fun TwoChairsAppRoot() {
                 )
             }
 
+            composable(OnboardingRoutes.PremiumPromoBack) {
+                PremiumPromoScreen(
+                    onSkip = { navController.popBackStack() },
+                    onBuy = { navController.navigate(OnboardingRoutes.PurchaseStub) },
+                )
+            }
+
             composable(OnboardingRoutes.RegisterOffer) {
                 RegisterOfferScreen(onRegister = { navController.navigate(OnboardingRoutes.Register) })
             }
@@ -102,8 +109,15 @@ fun TwoChairsAppRoot() {
             composable(OnboardingRoutes.Home) {
                 HomeScreen(
                     isPremiumUser = isPremiumUser,
-                    onOpenPaidTheme = { navController.navigate(OnboardingRoutes.PurchaseStub) },
+                    onOpenPaidTheme = { product ->
+                        val deckId = product.deckId
+                        if (deckId != null) {
+                            navController.navigate(OnboardingRoutes.themeDetails(deckId))
+                        }
+                    },
                     onOpenProfile = { navController.navigate(OnboardingRoutes.Profile) },
+                    onOpenPremiumPromo = { navController.navigate(OnboardingRoutes.PremiumPromoBack) },
+                    onStartGame = { navController.navigate(OnboardingRoutes.DeckMenu) },
                 )
             }
 
@@ -120,6 +134,26 @@ fun TwoChairsAppRoot() {
                         }
                     },
                 )
+            }
+
+            composable(OnboardingRoutes.DeckMenu) {
+                DeckMenuScreen(
+                    onBack = { navController.popBackStack() },
+                )
+            }
+
+            composable(OnboardingRoutes.ThemeDetailsPattern) { backStackEntry ->
+                val deckId = OnboardingRoutes.parseDeckId(
+                    backStackEntry.arguments?.getString(OnboardingRoutes.DeckIdArg),
+                )
+                if (deckId != null) {
+                    ThemeDetailsScreen(
+                        deckId = deckId,
+                        onBack = { navController.popBackStack() },
+                        onOpenPremiumPromo = { navController.navigate(OnboardingRoutes.PremiumPromoBack) },
+                        onBuy = { navController.navigate(OnboardingRoutes.PurchaseStub) },
+                    )
+                }
             }
 
             composable(OnboardingRoutes.PurchaseStub) {
