@@ -79,14 +79,18 @@ internal fun HomeScreen(
     onOpenPaidTheme: (Product) -> Unit,
     onOpenProfile: () -> Unit,
     onOpenPremiumPromo: () -> Unit,
+    onOpenMyDecks: () -> Unit,
+    onUnlockMyDeckFeature: () -> Unit,
     onStartGame: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val deckRepository = remember(context) { context.appContainer.deckRepository }
+    val myDeckRepository = remember(context) { context.appContainer.myDeckRepository }
     val storeRepository = remember(context) { context.appContainer.storeRepository }
     val scope = rememberCoroutineScope()
 
     var showcaseState by remember { mutableStateOf(HomeShowcaseUiState()) }
+    var myDeckFeatureState by remember { mutableStateOf(MyDeckFeatureUiState(isLoading = true)) }
 
     val reloadShowcase: () -> Unit = {
         scope.launch {
@@ -127,12 +131,49 @@ internal fun HomeScreen(
         }
     }
 
+    val reloadMyDeckFeature: () -> Unit = {
+        scope.launch {
+            myDeckFeatureState = MyDeckFeatureUiState(isLoading = true)
+
+            val canCreateResult = myDeckRepository.canCreateDecks()
+            val productsResult = storeRepository.getProducts()
+
+            when (canCreateResult) {
+                is ApiResult.Success -> {
+                    val unlockPrice = when (productsResult) {
+                        is ApiResult.Success -> {
+                            productsResult.data.firstOrNull {
+                                it.type == ProductType.FEATURE_CREATE_DECKS
+                            }?.priceRub
+                        }
+
+                        is ApiResult.Error -> null
+                    }
+
+                    myDeckFeatureState = MyDeckFeatureUiState(
+                        isLoading = false,
+                        canCreate = canCreateResult.data,
+                        unlockPriceRub = unlockPrice,
+                    )
+                }
+
+                is ApiResult.Error -> {
+                    myDeckFeatureState = MyDeckFeatureUiState(
+                        isLoading = false,
+                        errorText = canCreateResult.error.message,
+                    )
+                }
+            }
+        }
+    }
+
     LaunchedEffect(isPremiumUser) {
         if (isPremiumUser) {
             showcaseState = HomeShowcaseUiState(isLoading = false)
         } else {
             reloadShowcase()
         }
+        reloadMyDeckFeature()
     }
 
     TwoChairsBackground {
@@ -256,6 +297,15 @@ internal fun HomeScreen(
                     color = Color(0xFF07101B),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
+                )
+            }
+
+            item {
+                MyDeckFeatureSection(
+                    uiState = myDeckFeatureState,
+                    onRetry = reloadMyDeckFeature,
+                    onOpenMyDecks = onOpenMyDecks,
+                    onUnlock = onUnlockMyDeckFeature,
                 )
             }
         }

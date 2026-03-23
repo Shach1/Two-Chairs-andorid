@@ -19,6 +19,9 @@ interface MyDeckApi {
     @GET("decks/my")
     suspend fun getMyDecks(): Response<List<DeckDto>>
 
+    @GET("decks/my/can-create")
+    suspend fun canCreate(): Response<Unit>
+
     @GET("decks/my/picker")
     suspend fun getPicker(): Response<List<MyDeckPickDto>>
 

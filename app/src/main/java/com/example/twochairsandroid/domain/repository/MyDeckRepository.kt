@@ -7,6 +7,7 @@ import com.example.twochairsandroid.domain.model.Question
 
 interface MyDeckRepository {
     suspend fun getMyDecks(): ApiResult<List<Deck>>
+    suspend fun canCreateDecks(): ApiResult<Boolean>
     suspend fun getDeckPicker(): ApiResult<List<MyDeckPick>>
     suspend fun createDeck(title: String, description: String?, ageRating: Int): ApiResult<Deck>
     suspend fun updateDeck(deckId: Long, title: String?, description: String?, ageRating: Int?): ApiResult<Deck>

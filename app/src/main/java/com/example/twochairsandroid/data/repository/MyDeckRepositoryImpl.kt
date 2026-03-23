@@ -29,6 +29,25 @@ class MyDeckRepositoryImpl(
         )
     }
 
+    override suspend fun canCreateDecks(): ApiResult<Boolean> {
+        val result = safeApiCall(
+            json = json,
+            execute = { myDeckApi.canCreate() },
+            mapSuccess = { true },
+        )
+
+        return when (result) {
+            is ApiResult.Success -> ApiResult.Success(true)
+            is ApiResult.Error -> {
+                if (result.error.httpCode == 400) {
+                    ApiResult.Success(false)
+                } else {
+                    ApiResult.Error(result.error)
+                }
+            }
+        }
+    }
+
     override suspend fun getDeckPicker(): ApiResult<List<MyDeckPick>> {
         return safeApiCall(
             json = json,
