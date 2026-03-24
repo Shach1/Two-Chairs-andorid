@@ -29,6 +29,7 @@ fun TwoChairsAppRoot() {
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
     var isPremiumUser by remember { mutableStateOf(false) }
+    var hasAuthorizedSession by remember { mutableStateOf(false) }
     var homeRefreshSignal by remember { mutableIntStateOf(0) }
     var startDestination by remember { mutableStateOf<String?>(null) }
 
@@ -36,11 +37,12 @@ fun TwoChairsAppRoot() {
         val accessToken = authRepository.getAccessToken()
         if (accessToken.isNullOrBlank()) {
             isPremiumUser = false
-            startDestination = OnboardingRoutes.Splash
+            hasAuthorizedSession = false
         } else {
+            hasAuthorizedSession = true
             isPremiumUser = authRepository.getIsPremium()
-            startDestination = OnboardingRoutes.Home
         }
+        startDestination = OnboardingRoutes.Splash
     }
 
     val destination = startDestination
@@ -57,7 +59,9 @@ fun TwoChairsAppRoot() {
             composable(OnboardingRoutes.Splash) {
                 ScreensaverScreen(
                     onFinished = {
-                        navController.navigate(OnboardingRoutes.Rules) {
+                        navController.navigate(
+                            if (hasAuthorizedSession) OnboardingRoutes.Home else OnboardingRoutes.Rules
+                        ) {
                             popUpTo(OnboardingRoutes.Splash) { inclusive = true }
                         }
                     },

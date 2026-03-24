@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,7 @@ import com.example.twochairsandroid.R
 import com.example.twochairsandroid.core.di.appContainer
 import com.example.twochairsandroid.core.network.ApiResult
 import com.example.twochairsandroid.domain.model.AuthSession
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private enum class SmsMode {
@@ -113,6 +115,15 @@ private fun SmsAuthScreen(
     val buttonText = when (step) {
         SmsStep.EnterPhone -> "Прислать мне СМС"
         SmsStep.EnterCode -> if (mode == SmsMode.Register) "Регистрация" else "Войти"
+    }
+
+    LaunchedEffect(step, expiresInSeconds) {
+        if (step != SmsStep.EnterCode) return@LaunchedEffect
+        val remaining = expiresInSeconds ?: return@LaunchedEffect
+        if (remaining > 0) {
+            delay(1000)
+            expiresInSeconds = (expiresInSeconds ?: 1) - 1
+        }
     }
 
     TwoChairsBackground {
