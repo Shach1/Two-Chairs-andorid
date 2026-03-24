@@ -196,7 +196,41 @@ fun TwoChairsAppRoot() {
             composable(OnboardingRoutes.DeckMenu) {
                 DeckMenuScreen(
                     onBack = { navController.popBackStack() },
+                    onSelectDeck = { deckId ->
+                        navController.navigate(OnboardingRoutes.game(deckId))
+                    },
                 )
+            }
+
+            composable(OnboardingRoutes.GamePattern) { backStackEntry ->
+                val deckId = OnboardingRoutes.parseGameDeckId(
+                    backStackEntry.arguments?.getString(OnboardingRoutes.GameDeckIdArg),
+                )
+                if (deckId == null) {
+                    LaunchedEffect(Unit) {
+                        navController.popBackStack()
+                    }
+                } else {
+                    GameScreen(
+                        deckId = deckId,
+                        onOpenOtherDecks = { navController.popBackStack() },
+                        onOpenMenu = {
+                            navController.navigate(OnboardingRoutes.Home) {
+                                popUpTo(OnboardingRoutes.Home) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        },
+                        onUnlockMyDeckFeature = { product ->
+                            navController.navigate(
+                                OnboardingRoutes.purchase(
+                                    productId = product.id,
+                                    title = product.title,
+                                    priceRub = product.priceRub,
+                                )
+                            )
+                        },
+                    )
+                }
             }
 
             composable(OnboardingRoutes.ThemeDetailsPattern) { backStackEntry ->

@@ -80,22 +80,41 @@ internal fun DeckMenuScreen(
 ) {
     val context = LocalContext.current
     val deckRepository = remember(context) { context.appContainer.deckRepository }
+    val myDeckRepository = remember(context) { context.appContainer.myDeckRepository }
     val scope = rememberCoroutineScope()
     var uiState by remember { mutableStateOf(DeckMenuUiState(isLoading = true)) }
 
     val reload: () -> Unit = {
         scope.launch {
             uiState = DeckMenuUiState(isLoading = true)
-            when (val result = deckRepository.getAccessibleDecks()) {
-                is ApiResult.Success -> uiState = DeckMenuUiState(
-                    isLoading = false,
-                    decks = result.data,
-                )
+            val accessibleResultDeferred = async { deckRepository.getAccessibleDecks() }
+            val myDecksResultDeferred = async { myDeckRepository.getMyDecks() }
 
-                is ApiResult.Error -> uiState = DeckMenuUiState(
-                    isLoading = false,
-                    errorText = result.error.message,
-                )
+            val accessibleResult = accessibleResultDeferred.await()
+            val myDecksResult = myDecksResultDeferred.await()
+
+            when (accessibleResult) {
+                is ApiResult.Success -> {
+                    val myDecks = when (myDecksResult) {
+                        is ApiResult.Success -> myDecksResult.data
+                        is ApiResult.Error -> emptyList()
+                    }
+
+                    uiState = DeckMenuUiState(
+                        isLoading = false,
+                        decks = mergeGameDecks(
+                            accessibleDecks = accessibleResult.data,
+                            myDecks = myDecks,
+                        ),
+                    )
+                }
+
+                is ApiResult.Error -> {
+                    uiState = DeckMenuUiState(
+                        isLoading = false,
+                        errorText = accessibleResult.error.message,
+                    )
+                }
             }
         }
     }
@@ -193,6 +212,15 @@ internal fun DeckMenuScreen(
             }
         }
     }
+}
+
+private fun mergeGameDecks(
+    accessibleDecks: List<Deck>,
+    myDecks: List<Deck>,
+): List<Deck> {
+    val knownIds = accessibleDecks.map { it.id }.toMutableSet()
+    val extraMyDecks = myDecks.filter { knownIds.add(it.id) }
+    return accessibleDecks + extraMyDecks
 }
 
 @Composable

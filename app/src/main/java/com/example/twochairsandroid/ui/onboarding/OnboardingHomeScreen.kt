@@ -190,6 +190,7 @@ internal fun HomeScreen(
             }
 
             item {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Супер темы",
                     style = MaterialTheme.typography.headlineLarge.copy(

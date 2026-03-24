@@ -5,6 +5,7 @@ import android.net.Uri
 internal object OnboardingRoutes {
     const val DeckIdArg = "deckId"
     const val MyDeckIdArg = "myDeckId"
+    const val GameDeckIdArg = "gameDeckId"
     const val PurchaseProductIdArg = "purchaseProductId"
     const val PurchaseTitleArg = "purchaseTitle"
     const val PurchasePriceArg = "purchasePrice"
@@ -24,12 +25,15 @@ internal object OnboardingRoutes {
     const val MyDecks = "my_decks"
     const val MyDeckEditorPattern = "my_deck_editor/{$MyDeckIdArg}"
     const val DeckMenu = "deck_menu"
+    const val GamePattern = "game/{$GameDeckIdArg}"
     const val ThemeDetailsPattern = "theme_details/{$DeckIdArg}"
 
     fun themeDetails(deckId: Long): String = "theme_details/$deckId"
     fun parseDeckId(raw: String?): Long? = raw?.toLongOrNull()
     fun myDeckEditor(deckId: Long?): String = "my_deck_editor/${deckId ?: "new"}"
     fun parseMyDeckId(raw: String?): Long? = raw?.toLongOrNull()
+    fun game(deckId: Long): String = "game/$deckId"
+    fun parseGameDeckId(raw: String?): Long? = raw?.toLongOrNull()
 
     fun purchase(
         productId: Long,
