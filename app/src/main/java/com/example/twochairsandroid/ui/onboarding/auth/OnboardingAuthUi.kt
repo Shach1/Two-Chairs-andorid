@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -44,7 +44,7 @@ import com.example.twochairsandroid.domain.model.AuthSession
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private enum class SmsMode {
+internal enum class SmsMode {
     Register,
     Login,
 }
@@ -55,43 +55,7 @@ private enum class SmsStep {
 }
 
 @Composable
-internal fun RegisterScreen(
-    onBack: () -> Unit,
-    onAlreadyHaveAccount: () -> Unit,
-    onRegistrationDone: (AuthSession) -> Unit,
-) {
-    SmsAuthScreen(
-        mode = SmsMode.Register,
-        title = "Регистрация",
-        description = "Введите телефон и вам придет\nСМС для регистрации",
-        mascotRes = R.drawable.mascot_registration,
-        onBack = onBack,
-        secondaryActionText = "У меня уже есть аккаунт",
-        onSecondaryAction = onAlreadyHaveAccount,
-        onSuccess = onRegistrationDone,
-    )
-}
-
-@Composable
-internal fun LoginScreen(
-    onBack: () -> Unit,
-    onNeedRegistration: () -> Unit,
-    onLoginDone: (AuthSession) -> Unit,
-) {
-    SmsAuthScreen(
-        mode = SmsMode.Login,
-        title = "Вход",
-        description = "Введите телефон и вам придет\nСМС для входа",
-        mascotRes = R.drawable.mascot_login,
-        onBack = onBack,
-        secondaryActionText = "Регистрация",
-        onSecondaryAction = onNeedRegistration,
-        onSuccess = onLoginDone,
-    )
-}
-
-@Composable
-private fun SmsAuthScreen(
+internal fun SmsAuthScreen(
     mode: SmsMode,
     title: String,
     description: String,

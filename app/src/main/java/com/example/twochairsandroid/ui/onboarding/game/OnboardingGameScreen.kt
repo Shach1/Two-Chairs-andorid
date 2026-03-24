@@ -2,7 +2,6 @@ package com.example.twochairsandroid.ui.onboarding
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -17,12 +16,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,11 +32,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -60,23 +54,6 @@ import com.example.twochairsandroid.domain.model.Question
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-
-private data class GameUiState(
-    val isLoadingQuestion: Boolean = false,
-    val isSubmittingAnswer: Boolean = false,
-    val errorText: String? = null,
-    val deckTitle: String = "Обычная колода",
-    val question: Question? = null,
-    val questionNumber: Int = 0,
-    val selectedAnswer: AnswerOption? = null,
-    val answerStats: AnswerStats? = null,
-    val canManageMyDecks: Boolean = false,
-    val unlockFeatureProduct: Product? = null,
-    val pickerVisible: Boolean = false,
-    val pickerLoading: Boolean = false,
-    val pickerErrorText: String? = null,
-    val pickerItems: List<MyDeckPick> = emptyList(),
-)
 
 @Composable
 internal fun GameScreen(
@@ -627,119 +604,5 @@ internal fun GameScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun GameOptionCard(
-    imageRes: Int,
-    text: String,
-    textColor: Color,
-    alpha: Float,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .alpha(alpha)
-            .clickable { onClick() },
-    ) {
-        androidx.compose.foundation.Image(
-            painter = painterResource(imageRes),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds,
-        )
-        Text(
-            text = text,
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontSize = 18.sp,
-                lineHeight = 22.sp,
-                fontWeight = FontWeight.Bold,
-            ),
-            textAlign = TextAlign.Center,
-            color = textColor,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(horizontal = 16.dp),
-        )
-    }
-}
-
-@Composable
-private fun AddToMyDeckAction(
-    canManageMyDecks: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) {
-    Box(
-        modifier = Modifier
-            .clickable(enabled = enabled) { onClick() }
-            .padding(end = 8.dp),
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(62.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xF7FFFFFF)),
-                contentAlignment = Alignment.Center,
-            ) {
-                Canvas(modifier = Modifier.size(30.dp)) {
-                    drawLine(
-                        color = Color(0xFF3A4FA1),
-                        start = androidx.compose.ui.geometry.Offset(size.width / 2f, 0f),
-                        end = androidx.compose.ui.geometry.Offset(size.width / 2f, size.height),
-                        strokeWidth = 3.5f,
-                        cap = StrokeCap.Round,
-                    )
-                    drawLine(
-                        color = Color(0xFF3A4FA1),
-                        start = androidx.compose.ui.geometry.Offset(0f, size.height / 2f),
-                        end = androidx.compose.ui.geometry.Offset(size.width, size.height / 2f),
-                        strokeWidth = 3.5f,
-                        cap = StrokeCap.Round,
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "В свою\nколоду",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontSize = 16.sp,
-                    lineHeight = 19.sp,
-                    fontWeight = FontWeight.Bold,
-                ),
-                color = Color(0xFF294BA2),
-            )
-        }
-
-        if (!canManageMyDecks) {
-            MiniLockIcon(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .offset(x = 2.dp, y = (-2).dp),
-            )
-        }
-    }
-}
-
-@Composable
-private fun MiniLockIcon(modifier: Modifier = Modifier) {
-    Canvas(modifier = modifier.size(16.dp)) {
-        drawArc(
-            color = Color(0xFF101010),
-            startAngle = 180f,
-            sweepAngle = 180f,
-            useCenter = false,
-            topLeft = androidx.compose.ui.geometry.Offset(size.width * 0.2f, size.height * 0.03f),
-            size = androidx.compose.ui.geometry.Size(size.width * 0.6f, size.height * 0.62f),
-            style = Stroke(width = 2.5f, cap = StrokeCap.Round),
-        )
-        drawRoundRect(
-            color = Color(0xFF101010),
-            topLeft = androidx.compose.ui.geometry.Offset(size.width * 0.16f, size.height * 0.42f),
-            size = androidx.compose.ui.geometry.Size(size.width * 0.68f, size.height * 0.5f),
-        )
     }
 }

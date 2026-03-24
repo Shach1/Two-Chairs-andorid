@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,42 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.twochairsandroid.R
-import kotlinx.coroutines.delay
-
-@Composable
-internal fun ScreensaverScreen(onFinished: () -> Unit) {
-    LaunchedEffect(Unit) {
-        delay(1800)
-        onFinished()
-    }
-
-    TwoChairsBackground {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 28.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Image(
-                painter = painterResource(R.drawable.screensaver_mascot),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .aspectRatio(1f),
-            )
-
-            Spacer(modifier = Modifier.height(34.dp))
-
-            Image(
-                painter = painterResource(R.drawable.screensaver_logo),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth(0.78f),
-                contentScale = ContentScale.FillWidth,
-            )
-        }
-    }
-}
 
 @Composable
 internal fun RulesScreen(onSkip: () -> Unit) {
